@@ -2,9 +2,90 @@
 """Programm wich encrypts and decrypts text files.
 """
 
+import itertools
+import string
 import tkinter as tk
 from  tkinter import filedialog
 
+
+class VigenenreCode:
+    def __init__(self):
+        self.file = ""
+        self.path = ""
+        self.unencoded_text = ""
+        self.encoded_text = ""
+        self.key = ""
+        self.procedure = False
+        self.charset = [x for x in itertools.chain(string.ascii_letters, string.digits)]
+
+    def read_file(self):
+        '''Reads text from the choosen file'''
+        with open(self.file, 'r', encoding='utf-8') as file:
+            for line in file:
+                self.unencoded_text += line
+
+    def get_index(self, character:str) -> int:
+        '''Returns the index of the given character
+        Parameters
+        ----------
+        character : str
+            a character to search for
+        Retruns
+        --------
+        int : index of the given character in the list
+        '''
+        return self.charset.index(character)
+
+    def calc_shift(self, character:str, corresponding_key_char:str) -> str:
+        '''
+        Takes a character and a corresponding key character, gets the index of the given charset, 
+        and returns the encoded respectively decrypted character.
+
+        Parameters
+        ----------
+        character : str
+            a character from the text
+        corresponding_key_char : str
+            a charected from the key
+
+        Returns
+        --------
+        str : str
+            encoded / decored character
+        '''
+        if character not in self.charset:
+            return character
+        else:
+            char_i = self.get_index(character)
+            key_i = self.get_index(corresponding_key_char)
+            if self.procedure is False:
+                if (char_i + key_i) > (len(self.charset) - 1):
+                    new_i = (char_i + key_i) % len(self.charset)
+                    return self.charset[new_i]
+                else:
+                    return self.charset[char_i + key_i]
+            elif self.procedure is True:
+                if (char_i - key_i) < 0:
+                    rest = char_i - key_i
+                    new_i = len(self.charset) + rest
+                    return self.charset[new_i]
+                else:
+                    return self.charset[char_i - key_i]
+
+    def code(self):
+        if self.procedure is False:
+            t_lenght = len(self.unencoded_text)
+            coding_list = [char for char in self.unencoded_text]
+        elif self.procedure is True:
+            t_lenght = len(self.encoded_text)
+            coding_list = [char for char in self.encoded_text]
+
+        l_key = (self.key * t_lenght)[:t_lenght]
+        print('DBUG:', l_key)
+        output = ""
+        for idx, char in enumerate(coding_list):
+            output += self.calc_shift(char, l_key[idx])
+        return output
 
 class VigenereApp(tk.Tk):
     def __init__(self):
@@ -58,17 +139,11 @@ class VigenereApp(tk.Tk):
         run_button = tk.Button(display_frame, text="RUN", command=run_btn)
         run_button.pack(fill=tk.X, padx=5, pady=(10, 5))
 
-class VigenenreCode:
-    def __init__(self):
-        super().__init__()
-        self.file = ""
-        self.path = ""
-        self.key = ""
 
 def main():
     '''Initial Function'''
-    vcrypt = VigenereApp()
-    vcrypt.mainloop()
+    #vcrypt = VigenereApp()
+    #vcrypt.mainloop()
 
 if __name__ == "__main__":
     main()
