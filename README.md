@@ -6,24 +6,24 @@ This program can be used to read in a text file, encrypt or decrypt it using a v
 ## Usage
 Using the program is very easy. 
 ### Step 1: Select a file
-    First click the 'Select file' button. A file dialog opens in which you select the text file for encryption or decryption.
+First click the 'Select file' button. A file dialog opens in which you select the text file for encryption or decryption.
 ### Step 2: Type in your keyword
-    Now select your keyword and type it into the text field provided.
-    **Important: Only ASCII letters, numbers and punctuations and normal spaces `" "` are allowed in the keyword.**
+Now select your keyword and type it into the text field provided.
+**Important: Only ASCII letters, numbers and punctuations and normal spaces `" "` are allowed in the keyword.**
 ### Step 3: Select proceedure
-    Now choose between the encryption and decryption procedure by simply clicking on it.
+Now choose between the encryption and decryption procedure by simply clicking on it.
 ### Step 4: Select path and file name
-    Next, select the path and name of the new file. 
-    To do so, click on the 'Save as' button, navigate to the desired destination directory in the file dialog that now opens, and enter a file name at the bottom.
+Next, select the path and name of the new file. 
+To do so, click on the 'Save as' button, navigate to the desired destination directory in the file dialog that now opens, and enter a file name at the bottom.
 ### Step 5: Run Encryption / Decryption
-    Last but not least, click the Encrypt / Decrypt button on the bottom of the window.
+Last but not least, click the Encrypt / Decrypt button on the bottom of the window.
 
 ## Supported Formats
-    Currently the following file formats are supported:
-    - Text Files, `*.txt`
+Currently the following file formats are supported:
+- Text Files, `*.txt`
 
 
 ## Future features
-    I plan to implement support for the following formats in future updates:
-    - Microsoft Word Files, `*.docx` `*.doc`
-    - Open Document Text Files, `*.odt`
+I plan to implement support for the following formats in future updates:
+- Microsoft Word Files, `*.docx` `*.doc`
+- Open Document Text Files, `*.odt`
