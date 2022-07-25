@@ -5,10 +5,11 @@
 import itertools
 import string
 import tkinter as tk
-from  tkinter import filedialog
+from  tkinter import filedialog, messagebox
 
 
 class VigenenreCode:
+    '''Class representing Vigenenre Logic'''
     def __init__(self):
         self.file = ""
         self.path = ""
@@ -24,6 +25,11 @@ class VigenenreCode:
             for line in file:
                 self.unencoded_text += line
 
+    def write_file(self):
+        '''Writes text to the choosen file'''
+        with open(self.path, 'w+', encoding='utf-8') as file:
+            file.write(self.encoded_text)
+
     def get_index(self, character:str) -> int:
         '''Returns the index of the given character
         Parameters
@@ -38,7 +44,7 @@ class VigenenreCode:
 
     def calc_shift(self, character:str, corresponding_key_char:str) -> str:
         '''
-        Takes a character and a corresponding key character, gets the index of the given charset, 
+        Takes a character and a corresponding key character, gets the index of the given charset,
         and returns the encoded respectively decrypted character.
 
         Parameters
@@ -58,13 +64,13 @@ class VigenenreCode:
         else:
             char_i = self.get_index(character)
             key_i = self.get_index(corresponding_key_char)
-            if self.procedure is False:
+            if self.procedure == 0:
                 if (char_i + key_i) > (len(self.charset) - 1):
                     new_i = (char_i + key_i) % len(self.charset)
                     return self.charset[new_i]
                 else:
                     return self.charset[char_i + key_i]
-            elif self.procedure is True:
+            elif self.procedure == 1:
                 if (char_i - key_i) < 0:
                     rest = char_i - key_i
                     new_i = len(self.charset) + rest
@@ -73,18 +79,17 @@ class VigenenreCode:
                     return self.charset[char_i - key_i]
 
     def code(self):
-        if self.procedure is False:
-            t_lenght = len(self.unencoded_text)
-            coding_list = [char for char in self.unencoded_text]
-        elif self.procedure is True:
-            t_lenght = len(self.encoded_text)
-            coding_list = [char for char in self.encoded_text]
+        '''
+        Encodes respectively decodes the text
+        '''
+        t_lenght = len(self.unencoded_text)
+        coding_list = [char for char in self.unencoded_text]
 
         l_key = (self.key * t_lenght)[:t_lenght]
-        print('DBUG:', l_key)
         output = ""
         for idx, char in enumerate(coding_list):
-            output += self.calc_shift(char, l_key[idx])
+            new_char = self.calc_shift(char, l_key[idx])
+            output += new_char
         return output
 
 class VigenereApp(tk.Tk):
@@ -131,19 +136,56 @@ class VigenereApp(tk.Tk):
         keyword_text = tk.Text(keyword_frame, padx=5, pady=5, height=1, width=20)
         keyword_text.pack()
 
+        # Choose Path
+        dir_frame = tk.LabelFrame(display_frame, text="Choose Path", padx=5, pady=5)
+        dir_frame.pack(fill=tk.X)
+        dir_show_label = tk.Label(dir_frame, width=65)
+        dir_show_label.configure(bg='lightgray', relief=tk.SUNKEN, pady=5, padx=5, anchor=tk.W)
+        dir_show_label.grid(row=0, column=0, sticky='nw',)
+
+        def _choose_dir():
+            choosen_dir = filedialog.asksaveasfilename()
+            dir_show_label.configure(text=choosen_dir)
+
+        dir_button = tk.Button(dir_frame, text="Save as", command=_choose_dir)
+        dir_button.grid(row=0, column=1, sticky='nw', padx=(10,0))
+
         # Run Buttom
         def run_btn():
-            procedure_value = p_var.get()
-            print(procedure_value)
-        # TODO: Needs run function!
+            enc = VigenenreCode()
+            enc.procedure = p_var.get()
+            enc.file = file_show_label.cget("text")
+            if not enc.file:
+                return messagebox.showerror(
+                    "Error: No file specified",
+                    "Please provide a text file that should be encrypted respectively decrypted!"
+                    )
+            enc.path = dir_show_label.cget("text")
+            if not enc.path:
+                return messagebox.showerror(
+                    "Error: No path specified",
+                    "Please provide a path and filename"
+                    )
+            enc.key = keyword_text.get("1.0", tk.END).strip()
+            print("DEBURG: ", enc.key)
+            if not enc.key:
+                return messagebox.showerror(
+                    "Error: No key specified",
+                    "Key has to be specified before running the command"
+                    )
+            enc.read_file()
+            enc.encoded_text = enc.code()
+            enc.write_file()
+
+
         run_button = tk.Button(display_frame, text="RUN", command=run_btn)
-        run_button.pack(fill=tk.X, padx=5, pady=(10, 5))
+        run_button.pack(padx=5, pady=(10, 5))
 
 
 def main():
     '''Initial Function'''
-    #vcrypt = VigenereApp()
-    #vcrypt.mainloop()
+    vcrypt = VigenereApp()
+    vcrypt.mainloop()
 
 if __name__ == "__main__":
     main()
